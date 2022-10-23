@@ -1,34 +1,31 @@
-let inputButton = document.querySelector('#btn-translate');
-let textInput = document.querySelector('textarea');
-let outputText = document.querySelector('#output-text');
-
-let serverUrl = "https://api.funtranslations.com/translate/minion.json";
+var btnTranslate = document.querySelector("#btn-translate");
+var txtInput = document.querySelector("#txt-input");
+var outputDiv = document.querySelector("#output");
 
 
-function urlText(text) {
-        return serverUrl + "?text=" + text;
+var serverURL = "https://api.funtranslations.com/translate/minion.json"
+
+function getTranslationURL(input){
+    return serverURL + "?" + "text=" + input
 }
 
-inputButton.addEventListener("click", function userClick() {
+function errorHandler(error) {
+    console.log("error occured", error);
+    alert("something wrong with server! try again after some time")
+}
 
-    if (textInput.value === '') {
-        alert('Please Enter some Text!');
-    } else if (!isNaN(parseFloat(textInput.value))) {
-        alert('Please Enter Text!');
-    } else if (/\d/.test(textInput.value)) {
-        alert('Please Enter only Text!');
-    } else {
-        fetch(urlText(textInput.value)).then(response => response.json()).then(function getJsonLog(json) {
-            console.log(urlText(textInput.value));
-            console.log(json);
-            outputText.innerText = json.contents.translated;
-        }).catch(function errorHandling(error) {
-            if (error.code === 429) {
-                alert("Sorry There are Too Many Requests ! Please try again after some time");
-            } else {
-                console.log("Sorry an Error Occured", error);
-                alert("Something went wrong with our server! Try again after some time");
-            }
-        });
-    }
-});
+function clickHandler(){
+    var inputText = txtInput.value; // take input 
+
+
+// calling  server to process the input url
+ fetch(getTranslationURL(inputText))
+.then(response => response.json())
+.then(json => {
+    var translatedText = json.contents.translated;
+    outputDiv.innerText = translatedText;
+})
+ .catch(errorHandler)
+};
+
+btnTranslate.addEventListener("click", clickHandler)
